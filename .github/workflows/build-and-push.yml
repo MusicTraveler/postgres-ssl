@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  LATEST_POSTGRES_MAJOR: 16  # Change this to update which version gets tagged as 'latest'
+  LATEST_POSTGRES_MAJOR: 18  # Change this to update which version gets tagged as 'latest'
 
 jobs:
   build-postgres:
