@@ -1,13 +1,24 @@
 ARG POSTGRES_VERSION=18
 FROM postgres:${POSTGRES_VERSION}
 
-# Install OpenSSL, sudo, PostGIS, and pg_hashids
+# Install OpenSSL, sudo, PostGIS, and build dependencies for pg_hashids
 RUN apt-get update && apt-get install -y \
     openssl \
     sudo \
     postgresql-18-postgis-3 \
-    postgresql-18-pg-hashids \
+    postgresql-server-dev-18 \
+    git \
+    make \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
+
+# Build and install pg_hashids from source
+RUN git clone https://github.com/iCyberon/pg_hashids.git /tmp/pg_hashids && \
+    cd /tmp/pg_hashids && \
+    USE_PGXS=1 make && \
+    USE_PGXS=1 make install && \
+    cd / && \
+    rm -rf /tmp/pg_hashids
 
 # Allow the postgres user to execute certain commands as root without a password
 RUN echo "postgres ALL=(root) NOPASSWD: /usr/bin/mkdir, /bin/chown, /usr/bin/openssl" > /etc/sudoers.d/postgres
